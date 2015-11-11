@@ -7,7 +7,7 @@ con = pymysql.connect(host='localhost', unix_socket='/tmp/mysql.sock',user='root
 mysql = con.cursor(pymysql.cursors.DictCursor)
 client = MongoClient()
 db = client.sportsvu # MongoDB database: sportsvu, collection: requests
-mysql.execute("select game_id from SportsVuGameIdsUnique where not exists (select * from SportsVuGameIdsStoredInMongo where SportsVuGameIdsStoredInMongo.game_id = SportsVuGameIdsUnique.game_id) limit 1")
+mysql.execute("select game_id from SportsVuGameIdsUnique where not exists (select * from SportsVuGameIdsStoredInMongo where SportsVuGameIdsStoredInMongo.game_id = SportsVuGameIdsUnique.game_id)")
 for row in mysql.fetchall():
     game_id=row['game_id']
     for event_id in range(1,1000):
