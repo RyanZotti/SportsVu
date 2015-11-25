@@ -1,3 +1,4 @@
+import sys
 import requests
 import pandas as pd
 import pymysql
@@ -7,7 +8,8 @@ con = pymysql.connect(host='localhost', unix_socket='/tmp/mysql.sock',user='root
 mysql = con.cursor(pymysql.cursors.DictCursor)
 client = MongoClient()
 db = client.sportsvu # MongoDB database: sportsvu, collection: requests
-mysql.execute("select game_id from SportsVuGameIdsUnique where not exists (select * from SportsVuGameIdsStoredInMongo where SportsVuGameIdsStoredInMongo.game_id = SportsVuGameIdsUnique.game_id) limit 1")
+# Added command line parameter for cutoff game_id so that I can run multiple scripts in parallel without game_id overlap
+mysql.execute("""select game_id from SportsVuGameIdsUnique where not exists (select * from SportsVuGameIdsStoredInMongo where SportsVuGameIdsStoredInMongo.game_id = SportsVuGameIdsUnique.game_id) and game_id > "{game_id}" order by game_id asc """.format(game_id=sys.argv[1]))
 for row in mysql.fetchall():
     game_id=row['game_id']
     for event_id in range(1,1000):
