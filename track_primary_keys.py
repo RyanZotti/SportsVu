@@ -4,6 +4,9 @@ con = pymysql.connect(host='localhost', unix_socket='/tmp/mysql.sock',user='root
 mysql = con.cursor(pymysql.cursors.DictCursor)
 client = MongoClient()
 db = client.sportsvu
+# Clean up entries from any previous runs
+mysql.execute("delete from sportsvu_mongodb_primary_keys")
+con.commit()
 primary_keys = db.requests.find({},{'_id':1})
 for primary_key in primary_keys:
 	game_id = primary_key['_id']['game_id']
